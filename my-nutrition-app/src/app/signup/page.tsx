@@ -52,13 +52,7 @@ export default function SignUpPage() {
         onChange={(e) => setPassword(e.target.value)}
       />
       
-      <button
-        className="bg-green-600 text-white px-4 py-2 rounded mb-4"
-        onClick={handleEmailSignUp}
-      >
-        Sign Up with Email
-      </button>
-
+     
       {/* Google Sign Up */}
       <button
         className="bg-red-600 text-white px-4 py-2 rounded"
