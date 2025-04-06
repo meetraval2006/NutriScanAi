@@ -153,12 +153,7 @@ const ImageUpload = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      {text && (
-        <div className="extracted-text">
-          <h2>Extracted Text</h2>
-          <div className="text-content">{text}</div>
-        </div>
-      )}
+      
 
       {renderResponse()}
     </div>
