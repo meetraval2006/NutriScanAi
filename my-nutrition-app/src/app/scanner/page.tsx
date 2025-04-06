@@ -1,42 +1,125 @@
-'use client';
+"use client";
+import React, { useState } from 'react';
+import Tesseract from 'tesseract.js';
 
-import { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+const ImageUpload = () => {
+  // Explicitly define the state types as string | null
+  const [image, setImage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [text, setText] = useState<string | null>(''); // Initialized as empty string or null
+  const [medicalConditions, setMedicalConditions] = useState<string>('');
+  const [response, setResponse] = useState<any>(null);
 
-export default function ScannerPage() {
-  const [user, setUser] = useState<any>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      } else {
-        router.push('/login'); // not logged in, redirect to login
-      }
-    });
-  }, []);
-
-  const handleLogout = () => {
-    signOut(auth);
-    router.push('/login');
+  // Handle file selection
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      setImage(URL.createObjectURL(file)); // Preview the image
+    }
   };
 
-  if (!user) return <div>Loading...</div>;
+  // Handle the image analysis with Tesseract
+  const handleImageAnalysis = () => {
+    if (!image) {
+      alert('Please upload an image first!');
+      return;
+    }
+
+    setIsProcessing(true);
+    setText(''); // Reset text
+    setResponse(null); // Reset the response from Gemini API
+
+    // Use Tesseract.js to recognize text from the uploaded image
+    Tesseract.recognize(
+      image,
+      'eng',  // language (English in this case)
+      {
+        logger: (m) => console.log(m),  // Optional: log the progress
+      }
+    )
+      .then(({ data: { text } }) => {
+        setText(text);  // Set the recognized text
+        setIsProcessing(false);
+
+        // Now, send the extracted text + medical conditions to Gemini API
+        sendToGeminiAPI(text, medicalConditions);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsProcessing(false);
+      });
+  };
+
+  // Handle medical conditions text change
+  const handleMedicalConditionsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMedicalConditions(event.target.value);
+  };
+
+  // Function to send data to Gemini API
+  const sendToGeminiAPI = async (tesseractText: string, conditions: string) => {
+    // Combine Tesseract text with user medical conditions
+    const payload = {
+      nutritionText: tesseractText,
+      medicalConditions: conditions,
+    };
+
+    try {
+      const response = await fetch('https://your-gemini-api-endpoint.com/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      setResponse(data);  // Assuming the response contains analysis results
+    } catch (error) {
+      console.error('Error sending data to Gemini API:', error);
+      alert('Error sending data to Gemini API. Please try again later.');
+    }
+  };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl mb-4">Welcome, {user.email}</h1>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 text-white px-3 py-1 rounded mb-6"
-      >
-        Log Out
+    <div className="container">
+      <h1>Upload Nutrition Label and Enter Medical Conditions</h1>
+      
+      {/* Image upload */}
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+      
+      {/* Display the image preview */}
+      {image && <img src={image} alt="Uploaded" style={{ width: '300px', marginTop: '10px' }} />}
+      
+      {/* Medical conditions text box */}
+      <textarea
+        placeholder="Enter your medical conditions"
+        value={medicalConditions}
+        onChange={handleMedicalConditionsChange}
+        className="medical-conditions-input"
+        style={{ width: '100%', marginTop: '10px', padding: '10px' }}
+      />
+
+      {/* Button to trigger image analysis */}
+      <button onClick={handleImageAnalysis} disabled={isProcessing}>
+        {isProcessing ? 'Processing...' : 'Analyze Image'}
       </button>
 
-      {/* OCR upload and Gemini analysis will go here */}
+      {/* Display recognized text */}
+      {text && (
+        <div style={{ marginTop: '20px' }}>
+          <h2>Extracted Text</h2>
+          <pre>{text}</pre>
+        </div>
+      )}
+
+      {/* Display response from Gemini API */}
+      {response && (
+        <div style={{ marginTop: '20px' }}>
+          <h2>Analysis Results</h2>
+          <pre>{JSON.stringify(response, null, 2)}</pre> {/* Display formatted response */}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default ImageUpload;
