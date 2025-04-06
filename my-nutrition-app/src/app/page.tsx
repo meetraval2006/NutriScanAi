@@ -1,9 +1,7 @@
-// /app/login/page.tsx
-
 'use client';
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
@@ -18,6 +16,16 @@ export default function LoginPage() {
       router.push('/scanner'); // Redirect to scanner after successful login
     } catch (error: any) {
       alert(`Login failed: ${error.message}`);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push('/scanner');
+    } catch (error: any) {
+      alert(`Google Sign-In failed: ${error.message}`);
     }
   };
 
@@ -40,14 +48,22 @@ export default function LoginPage() {
       />
       
       <button
-        className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
+        className="bg-blue-600 text-white px-4 py-2 rounded mb-4 w-full"
         onClick={handleLogin}
       >
         Log In
       </button>
 
-      {/* Sign Up Button */}
-      <p className="text-center">
+      <div className="mb-4 text-center">or</div>
+
+      <button
+        className="bg-red-600 text-white px-4 py-2 rounded w-full"
+        onClick={handleGoogleLogin}
+      >
+        Sign In with Google
+      </button>
+
+      <p className="text-center mt-4">
         Don't have an account?{' '}
         <a
           href="/signup"

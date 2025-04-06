@@ -1,4 +1,3 @@
-// /app/signup/page.tsx
 
 'use client';
 
@@ -12,22 +11,20 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  // Sign up with Email and Password
   const handleEmailSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      router.push('/scanner'); // Redirect to the scanner after sign up
+      router.push('/scanner'); 
     } catch (error: any) {
       alert(`Sign Up failed: ${error.message}`);
     }
   };
 
-  // Sign up with Google
   const handleGoogleSignUp = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/scanner'); // Redirect to scanner after sign up
+      router.push('/scanner'); 
     } catch (error: any) {
       alert(`Google sign up failed: ${error.message}`);
     }
