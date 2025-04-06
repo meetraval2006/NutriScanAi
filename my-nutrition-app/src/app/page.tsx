@@ -13,7 +13,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/scanner'); // Redirect to scanner after successful login
+      router.push('/scanner'); 
     } catch (error: any) {
       alert(`Login failed: ${error.message}`);
     }

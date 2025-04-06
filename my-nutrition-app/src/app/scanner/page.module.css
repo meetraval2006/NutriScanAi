@@ -1,0 +1,20 @@
+.response-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .upload-section {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .file-upload-status {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  
+  .upload-success {
+    color: #4CAF50;
+    font-weight: bold;
+  }

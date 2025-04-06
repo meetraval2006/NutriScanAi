@@ -47,7 +47,7 @@ export const queryGemini = async (nutritionText: string, medicalConditions: stri
     }
 
     INSTRUCTIONS:
-    1. Be concise but thorough
+    1. Be concise but thorough. Summarize the important points.
     2. Only flag ingredients that are actually problematic
     3. Provide practical alternatives
     4. If label is unreadable, say so

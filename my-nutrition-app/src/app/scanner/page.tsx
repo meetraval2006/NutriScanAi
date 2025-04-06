@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import Tesseract from 'tesseract.js';
 import { queryGemini } from '@/lib/gemini';
+import styles from './page.module.css';
+
 
 const ImageUpload = () => {
   const [image, setImage] = useState<string | null>(null);
