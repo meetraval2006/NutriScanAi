@@ -37,6 +37,7 @@ export default function SignUpPage() {
       {/* Email and Password Signup */}
       <input
         type="email"
+        value={email}
         placeholder="Email"
         className="border p-2 w-full mb-2 text-center"
         onChange={(e) => setEmail(e.target.value)}
@@ -44,10 +45,12 @@ export default function SignUpPage() {
       
       <input
         type="password"
+        value={password}
         placeholder="Password"
         className="border p-2 w-full mb-4 text-center"
         onChange={(e) => setPassword(e.target.value)}
       />
+      <button onClick={handleEmailSignUp}>Sign Up</button>
       
       <div className='mb-4 text-center'>or</div>
      
@@ -63,4 +66,3 @@ export default function SignUpPage() {
     </div>
   );
 }
-
