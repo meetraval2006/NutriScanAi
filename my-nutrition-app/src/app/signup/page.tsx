@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
   return (
     <div className="p-8 max-w-md mx-auto">
-      <h1 className="px-8 font-bold mb-4 text-center">Sign Up with Email and Password</h1>
+      <h1 className="px-10 font-bold mb-4 text-center">Sign Up with Email and Password</h1>
 
       {/* Email and Password Signup */}
       <input
