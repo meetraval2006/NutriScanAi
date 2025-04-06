@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
   return (
     <div className="p-8 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+      <h1 className="px-8 font-bold mb-4 text-center">Sign Up with Email and Password</h1>
 
       {/* Email and Password Signup */}
       <input
@@ -50,18 +50,27 @@ export default function SignUpPage() {
         className="border p-2 w-full mb-4 text-center"
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={handleEmailSignUp}>Sign Up</button>
       
-      <div className='mb-4 text-center'>or</div>
+      <div className='text-center'>
+        <button 
+        className='bg-red-600 px-4 py-2 rounded'
+        onClick={handleEmailSignUp}
+        >
+          Sign Up
+        </button>
+      </div>
+      
+      
+      <div className='mb-4 text-center '>or</div>
      
       {/* Google Sign Up */}
       <div className='text-center'>
-      <button
-        className="bg-red-600 px-4 py-2 rounded"
-        onClick={handleGoogleSignUp}
-      >
-        Sign Up with Google
-      </button>
+        <button
+          className="bg-red-600 px-4 py-2 rounded"
+          onClick={handleGoogleSignUp}
+        >
+          Sign Up with Google
+        </button>
       </div>
     </div>
   );
