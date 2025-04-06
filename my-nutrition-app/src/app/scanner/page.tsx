@@ -15,204 +15,204 @@ import {
   Heart,
   AlertTriangle,
   Info,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion"
 
 interface HarmfulComponent {
-  name: string
-  reason: string
-  recommendation?: string
-  alternative?: string
+  name: string;
+  reason: string;
+  recommendation?: string;
+  alternative?: string;
 }
 
 interface AnalysisResponse {
-  riskAssessment: string
-  harmfulComponents?: HarmfulComponent[]
-  generalAdvice?: string
+  riskAssessment: string;
+  harmfulComponents?: HarmfulComponent[];
+  generalAdvice?: string;
 }
 
 const ImageUpload = () => {
-  const [image, setImage] = useState<string | null>(null)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [processingProgress, setProcessingProgress] = useState(0)
-  const [text, setText] = useState<string>("")
-  const [medicalConditions, setMedicalConditions] = useState<string>("")
-  const [response, setResponse] = useState<AnalysisResponse | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<string>("upload")
-  const [dragActive, setDragActive] = useState<boolean>(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [image, setImage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const [text, setText] = useState<string>("");
+  const [medicalConditions, setMedicalConditions] = useState<string>("");
+  const [response, setResponse] = useState<AnalysisResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("upload");
+  const [dragActive, setDragActive] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Simulate progress during processing
   useEffect(() => {
-    let interval: NodeJS.Timeout
+    let interval: NodeJS.Timeout;
 
     if (isProcessing) {
-      setProcessingProgress(0)
+      setProcessingProgress(0);
       interval = setInterval(() => {
         setProcessingProgress((prev) => {
-          const newProgress = prev + Math.random() * 10
-          return newProgress >= 95 ? 95 : newProgress
-        })
-      }, 500)
+          const newProgress = prev + Math.random() * 10;
+          return newProgress >= 95 ? 95 : newProgress;
+        });
+      }, 500);
     } else if (processingProgress > 0) {
-      setProcessingProgress(100)
+      setProcessingProgress(100);
     }
 
     return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isProcessing])
+      if (interval) clearInterval(interval);
+    };
+  }, [isProcessing]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null
+    const file = event.target.files ? event.target.files[0] : null;
     if (file) {
-      processFile(file)
+      processFile(file);
     }
-  }
+  };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
+      setDragActive(true);
     } else if (e.type === "dragleave") {
-      setDragActive(false)
+      setDragActive(false);
     }
-  }
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0])
+      processFile(e.dataTransfer.files[0]);
     }
-  }
+  };
 
   const processFile = (file: File) => {
-    setImage(URL.createObjectURL(file))
-    setText("")
-    setResponse(null)
-    setError(null)
-    setActiveTab("preview")
-  }
+    setImage(URL.createObjectURL(file));
+    setText("");
+    setResponse(null);
+    setError(null);
+    setActiveTab("preview");
+  };
 
   const handleImageAnalysis = async () => {
     if (!image) {
-      setError("Please upload an image first!")
-      return
+      setError("Please upload an image first!");
+      return;
     }
 
     if (!medicalConditions.trim()) {
-      setError("Please enter your medical conditions")
-      return
+      setError("Please enter your medical conditions");
+      return;
     }
 
-    setIsProcessing(true)
-    setText("")
-    setResponse(null)
-    setError(null)
-    setActiveTab("results")
+    setIsProcessing(true);
+    setText("");
+    setResponse(null);
+    setError(null);
+    setActiveTab("results");
 
     try {
       const {
         data: { text: extractedText },
-      } = await Tesseract.recognize(image, "eng")
-      setText(extractedText)
-      await sendToGeminiAPI(extractedText, medicalConditions)
+      } = await Tesseract.recognize(image, "eng");
+      setText(extractedText);
+      await sendToGeminiAPI(extractedText, medicalConditions);
     } catch (err) {
-      console.error(err)
-      setError("Failed to process image. Please try again.")
+      console.error(err);
+      setError("Failed to process image. Please try again.");
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const handleMedicalConditionsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMedicalConditions(event.target.value)
-  }
+    setMedicalConditions(event.target.value);
+  };
 
   const sendToGeminiAPI = async (tesseractText: string, conditions: string) => {
     try {
-      const geminiResponse = await queryGemini(tesseractText, conditions)
-      setResponse(geminiResponse)
+      const geminiResponse = await queryGemini(tesseractText, conditions);
+      setResponse(geminiResponse);
     } catch (error) {
-      console.error("Error calling Gemini API:", error)
-      setError("Error analyzing nutrition data. Please try again.")
+      console.error("Error calling Gemini API:", error);
+      setError("Error analyzing nutrition data. Please try again.");
     }
-  }
+  };
 
   const clearImage = () => {
-    setImage(null)
-    setText("")
-    setResponse(null)
-    setError(null)
-    setActiveTab("upload")
+    setImage(null);
+    setText("");
+    setResponse(null);
+    setError(null);
+    setActiveTab("upload");
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const getRiskColor = (risk: string) => {
     switch (risk.toLowerCase()) {
       case "high":
-        return "bg-red-500"
+        return "bg-red-500";
       case "medium":
-        return "bg-orange-500"
+        return "bg-orange-500";
       case "low":
-        return "bg-green-500"
+        return "bg-green-500";
       default:
-        return "bg-blue-500"
+        return "bg-blue-500";
     }
-  }
+  };
 
   const getRiskIcon = (risk: string) => {
     switch (risk.toLowerCase()) {
       case "high":
-        return <AlertCircle className="h-5 w-5" />
+        return <AlertCircle className="h-5 w-5" />;
       case "medium":
-        return <AlertTriangle className="h-5 w-5" />
+        return <AlertTriangle className="h-5 w-5" />;
       case "low":
-        return <CheckCircle className="h-5 w-5" />
+        return <CheckCircle className="h-5 w-5" />;
       default:
-        return <Info className="h-5 w-5" />
+        return <Info className="h-5 w-5" />;
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4 sm:px-6 relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-6 px-2 sm:px-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-600 rounded-full filter blur-3xl opacity-10 animate-blob"></div>
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-red-600 rounded-full filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-orange-600 rounded-full filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
       <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] opacity-5"></div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          className="text-center mb-6"
         >
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
             <span className="block text-red-400">NutriScanAI</span>
           </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+          <p className="mt-2 max-w-md mx-auto text-sm text-gray-400 sm:text-base md:mt-3 md:text-lg md:max-w-2xl">
             Upload a nutrition label and enter your medical conditions to get personalized health insights.
           </p>
         </motion.div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-gray-800/50 border border-gray-700">
+          <TabsList className="grid w-full grid-cols-3 mb-4 bg-gray-800/50 border border-gray-700">
             <TabsTrigger
               value="upload"
               className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600 data-[state=active]:to-orange-600 data-[state=active]:text-white"
@@ -240,15 +240,15 @@ const ImageUpload = () => {
 
           <TabsContent value="upload">
             <Card className="backdrop-blur-sm bg-black/40 border border-gray-800 shadow-2xl">
-              <CardHeader>
+              <CardHeader className="p-4">
                 <CardTitle className="text-white">Upload Nutrition Label</CardTitle>
                 <CardDescription className="text-gray-400">
                   Upload a clear image of a nutrition facts label to analyze
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4">
                 <div
-                  className={`border-2 border-dashed rounded-lg p-12 text-center ${
+                  className={`border-2 border-dashed rounded-lg p-6 text-center ${
                     dragActive ? "border-red-500 bg-red-500/10" : "border-gray-700 dark:border-gray-700"
                   } transition-colors duration-200 ease-in-out cursor-pointer`}
                   onDragEnter={handleDrag}
@@ -264,32 +264,32 @@ const ImageUpload = () => {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  <div className="flex flex-col items-center justify-center space-y-4">
+                  <div className="flex flex-col items-center justify-center space-y-3">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="bg-gradient-to-r from-red-600/20 to-orange-600/20 rounded-full p-4"
                     >
-                      <Camera className="h-10 w-10 text-red-400" />
+                      <Camera className="h-8 w-8 text-red-400" />
                     </motion.div>
                     <div>
-                      <p className="text-lg font-medium text-white">Drag & drop or click to upload</p>
-                      <p className="text-sm text-gray-400">Supports JPG, PNG, and WEBP</p>
+                      <p className="text-base font-medium text-white">Drag & drop or click to upload</p>
+                      <p className="text-xs text-gray-400">Supports JPG, PNG, and WEBP</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8">
-                  <label className="block text-lg font-medium text-white mb-2">Your Medical Conditions</label>
+                <div className="mt-4">
+                  <label className="block text-base font-medium text-white mb-2">Your Medical Conditions</label>
                   <Textarea
                     placeholder="e.g. Diabetes, High Blood Pressure, Gluten Intolerance"
                     value={medicalConditions}
                     onChange={handleMedicalConditionsChange}
-                    className="min-h-[120px] bg-gray-800/50 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-red-500"
+                    className="min-h-[100px] bg-gray-800/50 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-red-500"
                   />
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex justify-between p-4">
                 <Button
                   variant="outline"
                   disabled={!medicalConditions.trim()}
@@ -371,6 +371,7 @@ const ImageUpload = () => {
                     <div className="w-full max-w-md">
                       <Progress
                         value={processingProgress}
+                        className="h-2 bg-gray-700"
                         className="h-2 bg-gray-700"
                         style={{ background: 'linear-gradient(to right, #dc2626, #ea580c)' }}
                       />
@@ -500,16 +501,15 @@ const ImageUpload = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 p-4 bg-red-900/20 rounded-lg border border-red-800 text-red-400 flex items-center"
+            className="mt-4 p-3 bg-red-900/20 rounded-lg border border-red-800 text-red-400 flex items-center"
           >
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-            <p>{error}</p>
+            <p className="text-sm">{error}</p>
           </motion.div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ImageUpload
-
+export default ImageUpload;
