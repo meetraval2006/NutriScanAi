@@ -369,7 +369,12 @@ const ImageUpload = () => {
                       <p className="text-sm text-gray-400 mt-1">This may take a moment</p>
                     </div>
                     <div className="w-full max-w-md">
-                      <Progress value={processingProgress} className="h-2 bg-gray-700" />
+                      <Progress
+                        value={processingProgress}
+                        className="h-2 bg-gray-700"
+                        className="h-2 bg-gray-700"
+                        style={{ background: 'linear-gradient(to right, #dc2626, #ea580c)' }}
+                      />
                       <p className="text-xs text-right mt-1 text-gray-400">{Math.round(processingProgress)}%</p>
                     </div>
                   </div>
