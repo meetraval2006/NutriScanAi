@@ -38,25 +38,29 @@ export default function SignUpPage() {
       <input
         type="email"
         placeholder="Email"
-        className="border p-2 w-full mb-2"
+        className="border p-2 w-full mb-2 text-center"
         onChange={(e) => setEmail(e.target.value)}
       />
       
       <input
         type="password"
         placeholder="Password"
-        className="border p-2 w-full mb-4"
+        className="border p-2 w-full mb-4 text-center"
         onChange={(e) => setPassword(e.target.value)}
       />
       
+      <div className='mb-4 text-center'>or</div>
      
       {/* Google Sign Up */}
+      <div className='text-center'>
       <button
-        className="bg-red-600 text-white px-4 py-2 rounded"
+        className="bg-red-600 px-4 py-2 rounded"
         onClick={handleGoogleSignUp}
       >
         Sign Up with Google
       </button>
+      </div>
     </div>
   );
 }
+
